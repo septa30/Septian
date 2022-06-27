@@ -1,0 +1,41 @@
+#include <DHT.h>
+#include <DHT_U.h>
+
+#include <DHT.h>
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ThingSpeak.h>
+String apikey = "000000"; //your API Key from ThingSpeak.com
+const char *ssid = "xxxxxxxxxxxx"; //Your Wifi 
+const char *pass = "xxxxxxx"; //Yor password wifi
+const char *server = "api.thingspeak.com";
+WiFiClient client;
+unsigned long myChannelNumber = 00000000; //Your Channel Number
+const char *myWriteAPIKey = "00000000"; //your API Key from ThingSpeak.com
+
+#define SECRET_SSID "XXXXXXXXXX"    // replace MySSID with your WiFi network name
+#define SECRET_PASS "XXXXXXXXX"  // replace MyPassword with your WiFi password
+#define SECRET_CH_ID 0000000      // replace 0000000 with your channel number
+#define SECRET_WRITE_APIKEY "AH6LD5JE7FYS6APV"   // replace XYZ with your channel write API Key
+#define DHTPIN D3
+DHT dht(DHTPIN, DHT11);
+
+void setup() {
+ Serial.begin(9600);
+ dht.begin();
+ delay(10);
+ Serial.println("Connected");
+ WiFi.begin(ssid,pass);
+ ThingSpeak.begin(client);
+}
+
+void loop() {
+  float t = dht.readTemperature();
+  if(isnan(t)){
+    Serial.println("Sensor Tidak Terdekeksi");
+    return;
+  }
+  ThingSpeak.writeField(myChannelNumber, 1, t, myWriteAPIKey);
+  delay(10);
+}
+ 
